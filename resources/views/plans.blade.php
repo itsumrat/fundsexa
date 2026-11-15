@@ -56,10 +56,13 @@
 <!-- Plan Cards (managed in Admin → Plan Settings) -->
 @php
   $planList  = \App\Models\PlanSetting::where('is_active', true)->orderBy('level')->get();
-  $planCount = max(1, $planList->count());
+  // FDR is shown in its own full-width row below the regular plans
+  $fdrPlan   = $planList->firstWhere('plan_key', 'FDR');
+  $gridPlans = $planList->reject(fn ($p) => $p->plan_key === 'FDR')->values();
+  $planCount = max(1, $gridPlans->count());
 @endphp
-  <div class="row g-4 mb-5">
-    @forelse($planList as $i => $p)
+  <div class="row g-4 {{ $fdrPlan ? 'mb-4' : 'mb-5' }}">
+    @forelse($gridPlans as $i => $p)
     <div class="col-sm-6 {{ $planCount >= 5 ? 'col-lg-4 col-xl' : 'col-lg-' . ($planCount >= 4 ? 3 : 12 / $planCount) }}">
       <div class="plan-card {{ $p->badge ? 'featured' : '' }}" style="border-top:3px solid {{ $p->color }};">
         <div class="plan-tier">{{ $p->icon }} {{ $p->name }}@if($p->badge) <span class="badge bg-primary-soft ms-1">{{ $p->badge }}</span>@endif</div>
@@ -93,9 +96,63 @@
       </div>
     </div>
     @empty
+    @unless($fdrPlan)
     <div class="col-12 text-center text-muted py-5">No plans are available right now.</div>
+    @endunless
     @endforelse
   </div>
+
+  @if($fdrPlan)
+  @php $p = $fdrPlan; @endphp
+  <!-- FDR plan (full-width row) -->
+  <div class="row mb-5">
+    <div class="col-12">
+      <div class="plan-card {{ $p->badge ? 'featured' : '' }}" style="border-top:3px solid {{ $p->color }};">
+        <div class="row g-4 align-items-center">
+          <div class="col-lg-4">
+            @if($p->badge)
+            <span style="display:inline-block;background:{{ $p->color }};color:#fff;font-size:12px;font-weight:800;letter-spacing:1px;text-transform:uppercase;border-radius:999px;padding:5px 14px;margin-bottom:12px;">🔥 {{ $p->badge }}</span>
+            @endif
+            <div class="plan-tier">{{ $p->icon }} {{ $p->name }}</div>
+            <div class="plan-rate">{{ $p->rateLabel() }}</div>
+            <div class="plan-period">Per Day</div>
+            @if($p->description)
+            <p class="text-muted mt-3 mb-0" style="font-size:13px;line-height:1.55;">{{ $p->description }}</p>
+            @endif
+          </div>
+          <div class="col-lg-5">
+            <div class="d-flex flex-column gap-2">
+              <div class="d-flex justify-content-between align-items-center" style="background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:8px 12px;font-size:13px;">
+                <span class="text-muted">Amount</span>
+                <span style="font-weight:600;">{{ $p->rangeLabel() }} USDT</span>
+              </div>
+              <div class="d-flex justify-content-between align-items-center" style="background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:8px 12px;font-size:13px;">
+                <span class="text-muted">Duration</span>
+                <span style="font-weight:600;">{{ $p->duration_days }} {{ \Illuminate\Support\Str::plural('Day', $p->duration_days) }}</span>
+              </div>
+              <div class="d-flex justify-content-between align-items-center" style="background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:8px 12px;font-size:13px;">
+                <span class="text-muted">Max Cycles</span>
+                <span style="font-weight:600;">{{ $p->max_cycles }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-3">
+            @auth
+            <button class="btn btn-primary w-100" style="font-size:13px;padding:11px;"
+              onclick='openPlanRequest(@json($p->plan_key), @json($p->name), {{ $p->min_amount }}, {{ $p->max_amount ?? "null" }}, {{ $p->rate_min }}, {{ $p->duration_days }}, {{ $p->max_cycles }})'>
+              Select {{ $p->name }}
+            </button>
+            @else
+            <a href="{{ route('login') }}" class="btn btn-outline-primary w-100" style="font-size:13px;padding:11px;">
+              Sign In to Select
+            </a>
+            @endauth
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  @endif
 
   <!-- Profit Projection -->
   <div class="card mb-4">

@@ -54,6 +54,10 @@ class CalculateDailyProfit extends Command
     private function getRate(float $balance): ?float
     {
         foreach (PlanSetting::config() as $plan) {
+            // FDR is a separate fixed-deposit product, not a balance tier
+            if ($plan['key'] === 'FDR') {
+                continue;
+            }
             if ($balance >= $plan['min'] && ($plan['max'] === null || $balance <= $plan['max'])) {
                 return $plan['rate_min'] / 100;
             }

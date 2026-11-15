@@ -54,6 +54,7 @@ class Investment extends Model
     public function planBadgeColor(): string
     {
         return match(true) {
+            str_contains($this->plan_name, 'FDR') => '#0f766e',
             str_contains($this->plan_name, 'Diamond') => '#0891b2',
             str_contains($this->plan_name, 'VIP 2') => '#f59e0b',
             str_contains($this->plan_name, 'VIP 1') => '#a78bfa',
