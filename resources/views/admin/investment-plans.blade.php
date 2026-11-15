@@ -46,7 +46,7 @@
 {{-- ── PLAN REFERENCE CARDS ── --}}
 <div class="row g-2 mb-4">
   @foreach(\App\Models\PlanSetting::orderBy('level')->get() as $pd)
-  <div class="col-6 col-lg-3">
+  <div class="col-6 col-lg">
     <div style="background:var(--surface);border:1px solid var(--border);border-top:3px solid {{ $pd->color }};border-radius:10px;padding:12px;{{ $pd->is_active ? '' : 'opacity:0.6;' }}">
       <div style="font-weight:800;color:{{ $pd->color }};font-size:13px;">{{ $pd->name }}@unless($pd->is_active) <span class="badge badge-gray">Hidden</span>@endunless</div>
       <div style="font-size:11px;color:var(--muted);margin-bottom:8px;">{{ $pd->rangeLabel() }}</div>

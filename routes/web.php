@@ -70,7 +70,7 @@ Route::middleware(['auth', 'admin'])
         Route::post('/plan-requests/{planRequest}/approve', [PlanRequestAdminController::class, 'approve'])->name('plan-requests.approve');
         Route::post('/plan-requests/{planRequest}/reject', [PlanRequestAdminController::class, 'reject'])->name('plan-requests.reject');
 
-        // Plan Settings (edit the 4 plans)
+        // Plan Settings (edit the plans)
         Route::get('/plan-settings', [PlanSettingController::class, 'index'])->name('plan-settings');
         Route::patch('/plan-settings/{planSetting}', [PlanSettingController::class, 'update'])->name('plan-settings.update');
 
