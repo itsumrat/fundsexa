@@ -110,7 +110,10 @@
       <div class="plan-card {{ $p->badge ? 'featured' : '' }}" style="border-top:3px solid {{ $p->color }};">
         <div class="row g-4 align-items-center">
           <div class="col-lg-4">
-            <div class="plan-tier">{{ $p->icon }} {{ $p->name }}@if($p->badge) <span class="badge bg-primary-soft ms-1">{{ $p->badge }}</span>@endif</div>
+            @if($p->badge)
+            <span style="display:inline-block;background:{{ $p->color }};color:#fff;font-size:12px;font-weight:800;letter-spacing:1px;text-transform:uppercase;border-radius:999px;padding:5px 14px;margin-bottom:12px;">🔥 {{ $p->badge }}</span>
+            @endif
+            <div class="plan-tier">{{ $p->icon }} {{ $p->name }}</div>
             <div class="plan-rate">{{ $p->rateLabel() }}</div>
             <div class="plan-period">Per Day</div>
             @if($p->description)

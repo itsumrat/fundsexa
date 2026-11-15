@@ -20,7 +20,7 @@ return new class extends Migration
             'level'         => 6,
             'name'          => 'FDR',
             'icon'          => '🏦',
-            'badge'         => 'Fixed Deposit',
+            'badge'         => 'Special Offer',
             'description'   => 'Lock in your deposit for a fixed term and earn a steady daily return.',
             'min_amount'    => 5000,
             'max_amount'    => null, // no upper limit
