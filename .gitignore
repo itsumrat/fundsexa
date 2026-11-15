@@ -1,0 +1,37 @@
+# Environment / secrets
+.env
+.env.backup
+.env.production
+*.bak
+
+# Dependencies
+/vendor/
+/node_modules/
+
+# Laravel runtime files
+/storage/*.key
+/storage/logs/*
+!/storage/logs/.gitignore
+/storage/framework/cache/*
+!/storage/framework/cache/.gitignore
+/storage/framework/sessions/*
+!/storage/framework/sessions/.gitignore
+/storage/framework/views/*
+!/storage/framework/views/.gitignore
+/storage/framework/testing/
+/storage/app/public/messages/*
+/bootstrap/cache/*.php
+/public/storage
+/public/hot
+
+# Local setup helpers from the original project (not used in production)
+/setup.sh
+/setup.bat
+
+# Editors / OS
+/.idea/
+/.vscode/
+/.fleet/
+.DS_Store
+Thumbs.db
+.phpunit.result.cache
