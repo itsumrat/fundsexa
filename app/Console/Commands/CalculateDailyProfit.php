@@ -2,24 +2,13 @@
 
 namespace App\Console\Commands;
 
-use App\Models\{User, Transaction};
+use App\Models\{User, Transaction, PlanSetting};
 use Illuminate\Console\Command;
 
 class CalculateDailyProfit extends Command
 {
     protected $signature   = 'profit:calculate';
     protected $description = 'Calculate and credit daily profit for all active customers';
-
-    /**
-     * Profit rates per plan (based on total_deposited balance).
-     * In production you can replace this with a proper plans table.
-     */
-    private array $rates = [
-        ['min' => 500,    'max' => 1000,   'rate' => 0.015], // Plan 1: 1.5%
-        ['min' => 10000,  'max' => 15000,  'rate' => 0.032], // Plan 2: ~3.2%
-        ['min' => 25000,  'max' => 50000,  'rate' => 0.050], // VIP 1: 5%
-        ['min' => 50000,  'max' => PHP_INT_MAX, 'rate' => 0.070], // VIP 2: 7%
-    ];
 
     public function handle(): void
     {
@@ -56,11 +45,17 @@ class CalculateDailyProfit extends Command
         $this->info("✓ Daily profit calculated and credited for {$count} customer(s).");
     }
 
+    /**
+     * Daily rate (as a fraction) for a balance, taken from Admin → Plan Settings.
+     * Uses each plan's minimum rate (the same rate plan requests use).
+     * Plans are checked from the lowest level up, so a balance on a boundary
+     * (e.g. exactly $50,000) gets the lower plan's rate.
+     */
     private function getRate(float $balance): ?float
     {
-        foreach ($this->rates as $tier) {
-            if ($balance >= $tier['min'] && $balance <= $tier['max']) {
-                return $tier['rate'];
+        foreach (PlanSetting::config() as $plan) {
+            if ($balance >= $plan['min'] && ($plan['max'] === null || $balance <= $plan['max'])) {
+                return $plan['rate_min'] / 100;
             }
         }
         return null;
