@@ -60,7 +60,7 @@
 @endphp
   <div class="row g-4 mb-5">
     @forelse($planList as $i => $p)
-    <div class="col-sm-6 col-lg-{{ $planCount >= 4 ? 3 : 12 / $planCount }}">
+    <div class="col-sm-6 {{ $planCount >= 5 ? 'col-lg-4 col-xl' : 'col-lg-' . ($planCount >= 4 ? 3 : 12 / $planCount) }}">
       <div class="plan-card {{ $p->badge ? 'featured' : '' }}" style="border-top:3px solid {{ $p->color }};">
         <div class="plan-tier">{{ $p->icon }} {{ $p->name }}@if($p->badge) <span class="badge bg-primary-soft ms-1">{{ $p->badge }}</span>@endif</div>
         <div class="plan-rate">{{ $p->rateLabel() }}</div>
